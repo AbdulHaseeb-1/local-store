@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiChevronUp, FiShoppingBag } from 'react-icons/fi';
-import LocalFont from "@next/font/local";
+import LocalFont from "next/font/local";
 import { TbCategory2, TbLayoutDashboard } from "react-icons/tb";
 import { BsBoxes } from 'react-icons/bs';
 import { CiBoxList } from 'react-icons/ci';
@@ -42,17 +42,23 @@ export default function SideBar(props: {
               </Label>
             }
           </Link>
-          <Button onClick={()=>{closeSidebar()}} className='md:hidden bg-transparent' size={"icon"}> <BiExit size={22} /></Button>
+          <Button onClick={() => { closeSidebar() }} className='md:hidden bg-transparent' size={"icon"}> <BiExit size={22} /></Button>
         </div>
         <Separator className='dark:bg-neutral-300 bg-neutral-800 h-[2px] w-20 flex m-auto' />
         <nav className={`flex flex-col gap-2 mt-6 ${!props.sidebarOpen ? "items-center" : ""} w-full p-2`}>
           <SidebarItem open={props.sidebarOpen} title='Dashboard' icon={<TbLayoutDashboard size={22} />} href='/control-panel/dashboard' identifier="dashboard" />
-          <SidebarItem open={props.sidebarOpen} title='Products' icon={<BsBoxes size={22} />} href='#' identifier='products'
+          <SidebarItem open={props.sidebarOpen} title='Product Management' icon={<BsBoxes size={22} />} href='#' identifier='products'
             subitems={[
               { title: "Add Product", href: "/control-panel/products/add_product" },
               { title: "Product List", href: "/control-panel/products/productList" },
             ]} />
-          <SidebarItem open={props.sidebarOpen} title='Orders' icon={<CiBoxList size={22} />} href='/control-panel/orders' identifier='orders' />
+          <SidebarItem open={props.sidebarOpen} title='Orders Management' icon={<CiBoxList size={22} />} href='#' identifier='orders'
+            subitems={[
+              { title: "Orders", href: "/control-panel/orders" },
+              { title: "Statistics", href: "/control-panel/orders/statistics" },
+            ]}
+
+          />
           <SidebarItem open={props.sidebarOpen} title='Categories' icon={<TbCategory2 size={22} />} href='/control-panel/categories' identifier='categories' />
         </nav>
       </div>

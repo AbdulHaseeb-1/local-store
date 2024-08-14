@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/lib/ThemeProvider";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import { SessionProvider } from "next-auth/react";
 import { CartProvider } from "@/Context/Cart";
 import { Toaster } from "@/components/ui/toaster";
 import { CategoryProvider } from "@/Context/Categories";
-import AttributeProvider from "@/Context/Attributes";
 import UIProvider from "@/Context/UI";
 import ProductFormProvider from "@/Context/ProductForm";
 

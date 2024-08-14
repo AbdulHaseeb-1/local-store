@@ -19,10 +19,6 @@ export default function Component() {
 
 
 
-
-
-
-
   useEffect(() => {
     setMyCart(cart);
     const newTotal = cart.reduce((prevTotal, item: any) => prevTotal + Number(item.price) * Number(item.quantity), 0);

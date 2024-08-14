@@ -2,10 +2,13 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
-import path from "path";
-import { writeFile } from "fs";
 import { auth } from "@/lib/auth";
-import { Judson } from "next/font/google";
+import { saveImage } from "@/lib/helpers";
+import { toJson } from "@/lib/helpers";
+
+// !!! -----------------------------------------------
+// !!! ---------------------- GET --------------------
+// !!! -----------------------------------------------
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,23 +20,20 @@ export async function GET(req: NextRequest) {
     });
     const categories = toJson(result);
 
-    const sizes = await prisma.product_size.findMany({
-      select: {
-        size_id: true,
-        size: true,
-      },
-    });
-
-    return NextResponse.json({ categories, sizes, status: 200 });
-  } catch (error) {
-    console.log(error);
-
+    return NextResponse.json({ categories, status: 200 });
+  } catch (error: any) {
+    console.log(error.message);
     return NextResponse.json({ Message: "Failed", status: 500 });
   }
 }
 
+// !!! -----------------------------------------------
+// !!! ----------------  POST  -------------------
+// !!! -----------------------------------------------
+
 export async function POST(req: NextRequest) {
   try {
+    // * AUTH CONFIRMATION
     let session: any = await auth();
     if (!session) {
       return NextResponse.json({ message: "UnAuthorize" }, { status: 403 });
@@ -55,13 +55,14 @@ export async function POST(req: NextRequest) {
 
     const isValidImage = (image: any) =>
       image instanceof File &&
-      (image.type === "image/png" || image.type === "image/jpeg");
+      (image.type === "image/png" ||
+        (image.type === "image/jpeg" && image.size < 4000000));
 
     if (!images.every(isValidImage)) {
-      throw new Error("Invalid image");
+      return NextResponse.json({ message: "InValid Image" }, { status: 400 });
     }
 
-    // Validate others object
+    // Validate details object
     const requiredFields = [
       "title",
       "description",
@@ -71,12 +72,13 @@ export async function POST(req: NextRequest) {
       "brand",
       "isFeatured",
     ];
-    const others: any = Object.fromEntries(
+
+    const details: any = Object.fromEntries(
       requiredFields.map((field) => [field, formData.get(field)])
     );
 
-    if (Object.values(others).some((value) => !value)) {
-      const missingField = requiredFields.find((field) => !others[field]);
+    if (Object.values(details).some((value) => !value)) {
+      const missingField = requiredFields.find((field) => !details[field]);
       return NextResponse.json(
         { message: `${missingField} is required` },
         { status: 400 }
@@ -84,22 +86,21 @@ export async function POST(req: NextRequest) {
     }
 
     const JSONAttributes: any = formData.get("attributes");
-    console.log(JSONAttributes);
 
     // Optionally, add more specific validation rules for each field
 
-    prisma.$transaction(async (prisma) => {
+    await prisma.$transaction(async (prisma) => {
       // Create product entry
       const createdProduct = await prisma.products.create({
         data: {
           admin_id: session.user.id,
-          product_title: others.title,
-          product_description: others.description,
-          price: others.price,
-          stock_quantity: Number(others.stock),
-          category_id: Number(others.category),
-          brand_name: others.brand,
-          is_featured: others.isFeatured == "true" ? true : false,
+          product_title: details.title,
+          product_description: details.description,
+          price: details.price,
+          stock_quantity: Number(details.stock),
+          category_id: Number(details.category),
+          brand_name: details.brand,
+          is_featured: details.isFeatured == "true" ? true : false,
         },
       });
 
@@ -167,7 +168,6 @@ export async function POST(req: NextRequest) {
       await Promise.all(
         images.map(async (image: any) => {
           const imageUrl = await saveImage(image);
-          console.log(imageUrl);
           await prisma.images.create({
             data: {
               image_url: imageUrl,
@@ -180,49 +180,10 @@ export async function POST(req: NextRequest) {
     // If everything is valid, proceed with processing the request
     return NextResponse.json({ message: "Success" }, { status: 201 });
   } catch (error: any) {
-    console.error("POST request error:", error);
-    if (error.message === "Invalid image") {
-      return NextResponse.json({ message: "Invalid image" }, { status: 400 });
-    }
-
+    console.error("POST Request Error:", error);
     return NextResponse.json(
       { message: "Failed to process request" },
       { status: 500 }
     );
   }
 }
-
-// Function to check if image type is valid
-
-// Function to save image to file
-async function saveImage(imageData: any) {
-  try {
-    const buffer: any = Buffer.from(await imageData.arrayBuffer());
-    const now = new Date();
-    const filename = `image_${now.getTime()}_${Math.random().toString(30)}`;
-    const imagePath = "/images/products/" + filename + ".png";
-    writeFile(
-      path.join("public/images/products/" + filename + ".png"),
-      buffer,
-      (err) => {
-        if (err) {
-          console.error("Error saving image:", err);
-          throw new Error("Failed to save image");
-        } else {
-          console.log("Image saved:", filename);
-        }
-      }
-    );
-    return imagePath;
-  } catch (err) {
-    console.error("Error saving image:", err);
-    throw new Error("Failed to save image");
-  }
-}
-
-const toJson = (param: any): string => {
-  // Return type for stricter checking
-  return JSON.stringify(param, (key, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  );
-};

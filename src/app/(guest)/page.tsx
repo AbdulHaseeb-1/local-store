@@ -14,7 +14,7 @@ export default function Home() {
       <div className="">
         <Products />
         <CategoryBar />
-        <BestChoices />
+        {/* <BestChoices /> */}
         <Services />
         <Footer />
       </div>

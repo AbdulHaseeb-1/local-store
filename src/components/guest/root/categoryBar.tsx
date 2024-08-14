@@ -26,7 +26,7 @@ export default async function CategoryBar() {
                         </p> */}
                     </div>
                 </div>
-                <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                <div className="mt-8 grid gap-2 grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
                     {!error ? categories.map((c: any) =>
                         <Link key={c.categoryId}
                             className="group flex flex-col items-center justify-center gap-2 rounded-lg bg-neutral-100 border shadow-md p-4 text-center transition-colors hover:bg-gray-100 dark:bg-neutral-900 dark:hover:bg-gray-800"

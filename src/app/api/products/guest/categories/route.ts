@@ -1,6 +1,8 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
-export const dynamic = "force-dynamic";
+import { toJson } from "@/lib/helpers";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,9 +25,3 @@ export async function GET(request: NextRequest) {
   }
 }
 
-const toJson = (param: any): string => {
-  // Return type for stricter checking
-  return JSON.stringify(param, (key, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  );
-};

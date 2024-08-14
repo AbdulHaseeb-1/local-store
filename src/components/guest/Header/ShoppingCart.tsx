@@ -20,7 +20,7 @@ export default function ShoppingCart() {
             <div className="relative">
                 <MdOutlineShoppingCart size={22} />
                 {cartSize > 0 && (
-                <div className="absolute top-0 right-0 -mt-1 -mr-1 bg-primary rounded-full px-1.5 py-0.5 text-xs font-medium dark:text-black text-white">
+                <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-primary rounded-full h-5 w-5 flex justify-center items-center text-xs font-medium  text-white">
                     {cartSize}
                 </div>
                 )}
