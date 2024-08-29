@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
         "AUTHINCREMENT",
-        "clsx"
+        "clsx",
+        "nivo",
+        "Uploadthing"
     ],
     "WillLuke.nextjs.addTypesOnSave": true,
     "WillLuke.nextjs.hasPrompted": true

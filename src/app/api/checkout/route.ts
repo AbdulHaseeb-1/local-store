@@ -10,12 +10,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const { paymentInfo, customerInfo, products, total } = body;
-    
+
     // Validate input data efficiently using destructuring assignment and type assertions
     if (!paymentInfo || !customerInfo || !total || !Array.isArray(products)) {
       return generateErrorResponse("Invalid Order Details", 400);
     }
 
+ 
     // Initialize total
     let originalProductsTotal = 0;
 
@@ -24,17 +25,20 @@ export async function POST(req: NextRequest) {
         // Get the original product
         const original: any = await prisma.products.findUnique({
           where: { product_id: product.id },
-          select: { product_id: true, price: true },
+          select: { product_id: true, selling_price: true },
         });
 
+       
+  
         // Check if product exists and prices match
-        if (original && product.price == original.price) {
-          originalProductsTotal += product.quantity * original.price;
+        if (original && product.price == original.selling_price) {
+          originalProductsTotal += product.quantity * original.selling_price;
         } else {
           return generateErrorResponse("Invalid Order Details", 400);
         }
       }
 
+   
       if (originalProductsTotal !== total) {
         return generateErrorResponse("Invalid Order Details", 400);
       }
@@ -62,9 +66,8 @@ export async function POST(req: NextRequest) {
             order_id: createdOrder.order_id,
             product_id: product.id,
             quantity: product.quantity,
-            unit_price: Number(product.price),
-            total_price:
-              Number(product.quantity) * Number(product.price),
+            unit_price: Number(product.selling_price),
+            total_price: Number(product.quantity) * Number(product.selling_price),
           },
         });
       }
@@ -80,4 +83,17 @@ export async function POST(req: NextRequest) {
     console.error(error);
     return generateErrorResponse(error.message || "An error occurred", 500);
   }
+}
+
+//  *  ---------------------
+
+export async function GET() {
+  const data = await prisma.special_attributes.findFirst({
+    select: {
+      shipping_fee: true,
+      delivery_time: true,
+      return_policy: true,
+    },
+  });
+  return NextResponse.json({ data }, { status: 200 });
 }

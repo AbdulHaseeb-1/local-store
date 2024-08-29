@@ -67,7 +67,8 @@ export async function POST(req: NextRequest) {
       "title",
       "description",
       "category",
-      "price",
+      "purchase_price",
+      "selling_price",
       "stock",
       "brand",
       "isFeatured",
@@ -96,7 +97,8 @@ export async function POST(req: NextRequest) {
           admin_id: session.user.id,
           product_title: details.title,
           product_description: details.description,
-          price: details.price,
+          purchase_price:details.purchase_price,
+          selling_price: details.selling_price,
           stock_quantity: Number(details.stock),
           category_id: Number(details.category),
           brand_name: details.brand,
@@ -111,7 +113,7 @@ export async function POST(req: NextRequest) {
           (attribute: any) => attribute.attributeName
         );
 
-        const storedAttributes = await prisma.attributes.findMany({
+        const storedAttributes = await prisma.product_attributes.findMany({
           select: {
             attribute_id: true,
             attribute_name: true,
@@ -134,14 +136,14 @@ export async function POST(req: NextRequest) {
 
         // Create new attributes
         if (newAttributes.length > 0) {
-          await prisma.attributes.createMany({
+          await prisma.product_attributes.createMany({
             data: newAttributes.map((attribute: any) => ({
               attribute_name: attribute.attributeName,
             })),
           });
         }
 
-        const allAttributes = await prisma.attributes.findMany({
+        const allAttributes = await prisma.product_attributes.findMany({
           select: {
             attribute_id: true,
             attribute_name: true,
@@ -154,7 +156,7 @@ export async function POST(req: NextRequest) {
         });
 
         // Create product attributes
-        await prisma.product_attributes.createMany({
+        await prisma.product_attribute_values.createMany({
           data: allAttributes.map((attribute: any) => ({
             product_id: createdProduct.product_id,
             attribute_id: attribute.attribute_id,

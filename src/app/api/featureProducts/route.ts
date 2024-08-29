@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       select: {
         product_id: true,
         product_title: true,
-        price: true,
+        selling_price: true,
         product_description: true,
         quantity: true,
         images: {
@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
             image_id: true,
             image_url: true,
           },
+          take: 1,
         },
         categories: {
           select: {
@@ -47,9 +48,8 @@ export async function GET(req: NextRequest) {
     const json = toJson(products);
 
     return NextResponse.json(json, { status: 200 });
-  } catch (err:any) {
+  } catch (err: any) {
     console.log(err.message);
     return NextResponse.json({ message: "Server Error" }, { status: 500 });
   }
 }
- 

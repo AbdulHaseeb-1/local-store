@@ -31,7 +31,7 @@ model images {
   image_id   BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   product_id BigInt?   @db.UnsignedBigInt
   image_url  String    @db.VarChar(255)
-  products   products? @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: SetNull, map: "images_ibfk_1")
+  products   products? @relation(fields: [product_id], references: [product_id], onDelete: Restrict, onUpdate: Restrict, map: "images_ibfk_1")
 
   @@index([product_id], map: "product_id")
 }
@@ -57,6 +57,7 @@ model orders {
   total_amount     Decimal              @db.Decimal(10, 2)
   order_address_id BigInt?              @db.UnsignedBigInt
   order_status     orders_order_status? @default(Pending)
+  paid             Boolean              @default(false)
   order_date       DateTime             @default(now()) @db.Timestamp(0)
   order_items      order_items[]
   order_address    order_address?       @relation(fields: [order_address_id], references: [order_address_id], onUpdate: SetNull, map: "orders_ibfk_1")
@@ -72,29 +73,29 @@ model payment_methods {
   is_active            Boolean? @default(true)
 }
 
-model product_size {
-  size_id Int    @id @default(autoincrement())
-  size    String @db.VarChar(10)
-}
-
 model products {
-  product_id          BigInt               @unique(map: "product_id") @default(autoincrement()) @db.UnsignedBigInt
-  product_title       String               @db.Text
-  product_description String               @db.Text
-  category_id         BigInt?              @db.UnsignedBigInt
-  brand_name          String               @db.VarChar(255)
-  price               Decimal              @db.Decimal(10, 2)
-  stock_quantity      Int                  @default(0)
-  is_active           Boolean              @default(true)
-  admin_id            BigInt
-  is_featured         Boolean              @default(false)
-  quantity            Int                  @default(1)
-  images              images[]
-  order_items         order_items[]
-  product_attributes  product_attributes[]
-  categories          categories?          @relation(fields: [category_id], references: [categoryId], onUpdate: SetNull, map: "products_ibfk_2")
+  product_id               BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
+  product_title            String                     @db.VarChar(255)
+  product_description      String                     @db.Text
+  brand_name               String                     @db.VarChar(100)
+  category_id              BigInt?                    @db.UnsignedBigInt
+  purchase_price           Decimal                    @default(0.00) @db.Decimal(10, 2)
+  selling_price            Decimal                    @default(0.00) @db.Decimal(10, 2)
+  stock_quantity           Int                        @default(0)
+  quantity                 Int                        @default(1)
+  sold_count               Int                        @default(0) @db.UnsignedInt
+  product_views            Int                        @default(0) @db.UnsignedInt
+  is_featured              Boolean                    @default(false)
+  is_active                Boolean                    @default(true)
+  admin_id                 BigInt
+  created_at               DateTime                   @default(now()) @db.Timestamp(0)
+  updated_at               DateTime                   @default(now()) @db.Timestamp(0)
+  images                   images[]
+  order_items              order_items[]
+  product_attribute_values product_attribute_values[]
+  categories               categories?                @relation(fields: [category_id], references: [categoryId], onUpdate: SetNull, map: "products_ibfk_1")
 
-  @@index([category_id], map: "products_ibfk_2")
+  @@index([category_id], map: "category_id")
 }
 
 model reviews {
@@ -127,27 +128,40 @@ model order_address {
   orders           orders[]
 }
 
-model product_conditions {
-  condition_id Int    @id @default(autoincrement()) @db.UnsignedSmallInt
-  condition    String @db.VarChar(100)
-}
-
-model attributes {
-  attribute_id       BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
-  attribute_name     String               @unique(map: "attribute_name") @db.VarChar(50)
-  product_attributes product_attributes[]
-}
-
 model product_attributes {
-  id           BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
-  product_id   BigInt     @db.UnsignedBigInt
-  attribute_id BigInt     @db.UnsignedBigInt
-  value        String     @db.VarChar(100)
-  products     products   @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "product_attributes_ibfk_1")
-  attributes   attributes @relation(fields: [attribute_id], references: [attribute_id], onUpdate: Restrict, map: "product_attributes_ibfk_2")
+  attribute_id             BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
+  attribute_name           String                     @unique(map: "attribute_name") @db.VarChar(50)
+  product_attribute_values product_attribute_values[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model special_attributes {
+  id            Int     @id @default(autoincrement()) @db.UnsignedTinyInt
+  shipping_fee  Int?    @default(0) @db.UnsignedInt
+  return_policy String? @db.Text
+  delivery_time String? @db.Text
+}
+
+model product_attribute_values {
+  id                 BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  product_id         BigInt             @db.UnsignedBigInt
+  attribute_id       BigInt             @db.UnsignedBigInt
+  value              String             @db.VarChar(100)
+  products           products           @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "product_attribute_values_ibfk_1")
+  product_attributes product_attributes @relation(fields: [attribute_id], references: [attribute_id], onUpdate: Restrict, map: "product_attribute_values_ibfk_2")
 
   @@index([attribute_id], map: "attribute_id")
   @@index([product_id], map: "product_id")
+}
+
+model websitevisitors {
+  VisitorID      Int       @id @default(autoincrement())
+  IPAddress      String?   @db.VarChar(45)
+  VisitTimestamp DateTime? @db.DateTime(0)
+  PageVisited    String?   @db.VarChar(255)
+  UserAgent      String?   @db.VarChar(255)
+  Referrer       String?   @db.VarChar(255)
+  DeviceType     String?   @db.VarChar(50)
 }
 
 enum users_role {

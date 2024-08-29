@@ -11,7 +11,7 @@ import {
     Select,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import ProductValidator from "@/Validators/productForm";
 import { clsx } from "clsx";
 import axios from "@/lib/axios";
@@ -20,8 +20,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { useProductForm } from "@/Context/ProductForm";
 import AddAttributeForm from "./components/addAttributeForm";
-import { MdClose } from "react-icons/md";
-import { FiDelete } from "react-icons/fi";
 import { BiTrash } from "react-icons/bi";
 
 
@@ -260,31 +258,54 @@ export default function ProductUploadForm() {
                                 </div>
 
                                 <div className="space-y-2">
-
-
-
-
-                                    <div className="grid grid-cols-2 ">
+                                    <div className="grid grid-cols-2 gap-3 ">
                                         <div className="flex flex-col space-y-1">
                                             <label
-                                                htmlFor="price"
+                                                htmlFor="p_price"
                                                 className={clsx("font-medium", {
                                                     "text-red-400": error && error.path[0] === "price",
                                                 })}
                                             >
-                                                Price
+                                                Purchase Price
                                             </label>
                                             <Input
+                                            id="p_price"
                                                 type="number"
-                                                placeholder="Price of Product"
-                                                name="price"
+                                                placeholder="Purchase Price of Product"
+                                                name="purchase_price"
                                                 onChange={handleChange}
                                                 className={clsx("", {
                                                     "border border-red-400":
-                                                        error && error.path[0] === "price",
+                                                        error && error.path[0] === "purchase_price",
                                                 })}
                                             />
-                                            {error && error.path[0] === "price" && (
+                                            {error && error.path[0] === "purchase_price" && (
+                                                <span className="text-xs text-red-400">
+                                                    {error.message}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col space-y-1">
+                                            <label
+                                                htmlFor="s_price"
+                                                className={clsx("font-medium", {
+                                                    "text-red-400": error && error.path[0] === "selling_rice",
+                                                })}
+                                            >
+                                                Selling Price
+                                            </label>
+                                            <Input
+                                            id="s_price"
+                                                type="number"
+                                                placeholder="Selling Price of Product"
+                                                name="selling_price"
+                                                onChange={handleChange}
+                                                className={clsx("", {
+                                                    "border border-red-400":
+                                                        error && error.path[0] === "selling_price",
+                                                })}
+                                            />
+                                            {error && error.path[0] === "selling_price" && (
                                                 <span className="text-xs text-red-400">
                                                     {error.message}
                                                 </span>
