@@ -22,7 +22,7 @@ export default async function Home() {
         {/* // * =============================== */}
 
         {/* <BestChoices /> */}
-        {/* <Services /> */}
+        <Services />
         <Footer />
       </div>
     </div>

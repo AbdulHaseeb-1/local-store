@@ -1,62 +1,51 @@
-import { Card, CardContent } from '@/components/ui/card'
-import React from 'react'
-import { BiLock } from 'react-icons/bi';
-import { BsTruck } from 'react-icons/bs'
-import { FaShoppingCart } from 'react-icons/fa';
-import { FiRefreshCw } from 'react-icons/fi';
+import React from 'react';
+import { FaShieldAlt, FaTruck, FaUndo } from 'react-icons/fa';
 
+function ServicesSection() {
+  const services = [
+    {
+      id: 1,
+      title: 'Fast and Free Delivery',
+      description: 'Enjoy quick and hassle-free shipping on all orders.',
+      icon: <FaTruck className="text-4xl text-blue-500 mb-4" />,
+    },
+    {
+      id: 2,
+      title: 'Easy Returns',
+      description: 'Return items within 30 days for a full refund.',
+      icon: <FaUndo className="text-4xl text-green-500 mb-4" />,
+    },
+    {
+      id: 3,
+      title: 'Secure Payments',
+      description: 'Safe and secure payment options.',
+      icon: <FaShieldAlt className="text-4xl text-yellow-500 mb-4" />,
+    },
+  ];
 
-
-
-export default function Services() {
-    const features = [
-        {
-            title: "Fast Delivery",
-            description: " Get your orders delivered in lightning-fast time, with our reliable shipping partners.",
-            icon: <BsTruck className="h-6 w-6 text-primary-foreground" />
-        },
-        {
-            title: "On Time Delivery",
-            description: " Get your orders delivered in lightning-fast time, with our reliable shipping partners.",
-            icon: <BsTruck className="h-6 w-6 text-primary-foreground" />
-        },
-        {
-            title: "Fast Delivery",
-            description: " Get your orders delivered in lightning-fast time, with our reliable shipping partners.",
-            icon: <BsTruck className="h-6 w-6 text-primary-foreground" />
-        },
-        {
-            title: "Fast Delivery",
-            description: " Get your orders delivered in lightning-fast time, with our reliable shipping partners.",
-            icon: <BsTruck className="h-6 w-6 text-primary-foreground" />
-        },
-    ];
-
-    return (
-        <section className="w-full py-12 md:py-24 lg:py-32 ">
-            <div className="container pb-10 flex flex-col justify-between gap-4 md:flex-row md:gap-8">
-                <div className="space-y-2  text-left">
-                    <h2 className="font-bold tracking-tighter text-2xl md:text-3xl  ">Services</h2>
-                    {/* <p className="text-gray-500 md:text-xl dark:text-gray-400">
-                            Discover products tailored to your specific needs.
-                        </p> */}
-                </div>
+  return (
+    <section className="py-16 dark:bg-background bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl font-bold text-center dark:text-gray-50 text-gray-800 mb-12">
+          Our Services
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="p-6 border  rounded-lg shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 bg-white dark:bg-neutral-800 text-center"
+            >
+              <div className="flex justify-center mb-4">
+                {service.icon}
+              </div>
+              <h3 className="text-2xl font-semibold dark:text-gray-50 text-gray-800 mb-2">{service.title}</h3>
+              <p className="text-gray-500">{service.description}</p>
             </div>
-            <div className="container grid grid-cols-1 gap-6 px-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4 lg:px-6 ">
-                {features.map((feature, index) =>
-                    <div key={index} className="border hover:text-white  hover:bg-gradient-to-r from-red-600 to-orange-600   flex flex-col items-start gap-4 rounded-lg bg-background p-6 shadow-sm transition hover:shadow-lg">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-                            {feature.icon}
-                        </div>
-                        <h3 className="text-xl font-semibold">{feature.title}</h3>
-                        <p className="">
-                            {feature.description}
-                        </p>
-                    </div>
-                )}
-            </div>
-        </section>
-    )
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
-
+export default ServicesSection;

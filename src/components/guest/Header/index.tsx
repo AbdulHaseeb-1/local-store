@@ -22,7 +22,7 @@ const NavigationBar = async () => {
   const session = await auth();
 
   return (
-    <header id="navbar" className="sticky h-14  dark:bg-neutral-900 bg-white  image top-0 z-40 flex w-full ">
+    <header id="navbar" className="sticky h-14  bg-background   image top-0 z-40 flex w-full ">
       <div className="flex flex-grow items-center justify-between px-4 py-4 gap-4 shadow-2 ">
         <div className="flex items-center gap-5 md:gap-10  ">
           {/* ======================-Logo============== */}
