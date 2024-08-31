@@ -91,7 +91,7 @@ export async function GET() {
   const data = await prisma.special_attributes.findFirst({
     select: {
       shipping_fee: true,
-      delivery_time: true,
+      delivery_info: true,
       return_policy: true,
     },
   });

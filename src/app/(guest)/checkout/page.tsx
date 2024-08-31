@@ -33,7 +33,7 @@ const initialStates = {
 const initialShippingStates = {
   shipping_fee: 0,
   return_policy: "",
-  delivery_time: "",
+  delivery_info: "",
 };
 
 const errorDefault = {
@@ -334,7 +334,7 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between">
               <span className="text-key-foreground">Delivery Time:</span>
-              <span className="">{shippingDetails.delivery_time}</span>
+              <span className="">{shippingDetails.delivery_info}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-key-foreground">Return Policy</span>

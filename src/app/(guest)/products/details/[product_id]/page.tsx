@@ -35,7 +35,7 @@ export default function ProductDetails({
       }
     }
     getProduct();
-  }, [params.product_id]); // Include params.product_id in the dependency array
+  }, [params.product_id, showToast]); // Include params.product_id in the dependency array
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8">

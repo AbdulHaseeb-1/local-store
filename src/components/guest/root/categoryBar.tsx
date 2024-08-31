@@ -21,7 +21,7 @@ export default function CategoryBar() {
       }
     }
     getCategories();
-  }, []);
+  }, [showToast]);
 
   if (categories.length == 0) {
     return <CategorySkeleton />;
