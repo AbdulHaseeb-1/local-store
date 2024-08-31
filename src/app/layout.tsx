@@ -4,13 +4,14 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { SessionProvider } from "next-auth/react";
 import { CartProvider } from "@/Context/Cart";
-import { Toaster } from "@/components/ui/toaster";
 import { CategoryProvider } from "@/Context/Categories";
 import UIProvider from "@/Context/UI";
 import ProductFormProvider from "@/Context/ProductForm";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { ToastProvider } from "@/Context/toast";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,18 +28,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} scroll-smooth `}>
-        <NextSSRPlugin
-          routerConfig={extractRouterConfig(ourFileRouter)}
-        />
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <SessionProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <CategoryProvider>
               <ProductFormProvider>
                 <UIProvider>
-                  <CartProvider>
-                    {children}
+                  <ToastProvider>
                     <Toaster />
-                  </CartProvider>
+                    <CartProvider>{children}</CartProvider>
+                  </ToastProvider>
                 </UIProvider>
               </ProductFormProvider>
             </CategoryProvider>

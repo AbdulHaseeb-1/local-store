@@ -3,13 +3,9 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
-export default function Hero(props : any) {
-
+export default function Hero(props: any) {
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      transition={{ duration: 1.5 }}
-      whileInView={{ opacity: 1 }}
       className="w-full min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-200 bg-background text-foreground overflow-hidden"
     >
       <div className="max-w-3xl text-center space-y-6 mx-auto">
@@ -43,7 +39,6 @@ export default function Hero(props : any) {
             size="lg"
             variant={"secondary"}
             className="text-lg w-full sm:w-auto"
-
           >
             Explore Categories
           </Button>

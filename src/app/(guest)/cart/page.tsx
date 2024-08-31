@@ -57,11 +57,6 @@ export default function Component() {
       <p className="text-gray-500 dark:text-gray-400 mb-8 text-center px-3   ">Looks like you haven{"'"}t added anything to your cart yet.</p>
       <div className="flex flex-col md:flex-row items-center gap-4">
         <Link href="/">
-          <Button variant="outline" size="lg" className="w-48">
-            Continue Shopping
-          </Button>
-        </Link>
-        <Link href="/">
           <Button variant="default" size="lg" className="w-48">
             Go to Homepage
           </Button>

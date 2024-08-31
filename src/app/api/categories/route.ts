@@ -15,10 +15,10 @@ export async function GET(req: NextRequest) {
     const count = categories.length;
     const json = toJson(categories);
 
-    return NextResponse.json({ json, length: count}, { status: 200 });
-  } catch (error) {
-    console.error(error);
-    return new NextResponse("Something went wrong", {
+    return NextResponse.json({ json, length: count }, { status: 200 });
+  } catch (error: any) {
+    console.error(error.message);
+    return new NextResponse(error.message, {
       status: 500,
       headers: {
         "content-type": "application/json",

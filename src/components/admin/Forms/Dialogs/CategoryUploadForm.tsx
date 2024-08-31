@@ -13,9 +13,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useCategories } from "@/Context/Categories";
 import axios from "@/lib/axios";
-import { useToast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
 import { UploadButton } from "@/components/uploadthings";
+import { useToast } from "@/Context/toast";
 
 interface Category {
   name: string;
@@ -31,7 +31,7 @@ export default function CategoryUploadForm() {
   const [imageName, setImageName] = useState("");
   const [isSubmitAble, setIsSubmitAble] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  const { showToast } = useToast();
 
   useEffect(() => {
     setIsSubmitAble(
@@ -72,22 +72,13 @@ export default function CategoryUploadForm() {
 
       if (response.status === 200) {
         setIsSubmitting(false);
-        toast({
-          title: "Success",
-          description: "Category added successfully",
-          className: "text-white bg-green-600",
-        });
+        showToast("Category added successfully", "success", 5000);
         setCategories([...categories, category]);
         handleCloseModal();
       }
-    } catch (e) {
+    } catch (e: any) {
       setIsSubmitting(false);
-      console.error(e);
-      toast({
-        title: "Error",
-        description: "Failed to add category",
-        className: "text-white bg-red-600",
-      });
+      showToast(e.message, "error", 5000);
     }
   };
 
@@ -139,8 +130,8 @@ export default function CategoryUploadForm() {
                 content={{
                   allowedContent({ isUploading }) {
                     return isUploading
-                      ? "Uploading..."
-                      : imageName || "Allowed : PNG,JPG";
+                      ? " Uploading... 🫸"
+                      : `${imageName}` || "Allowed : PNG,JPG";
                   },
                 }}
                 endpoint="categoryImageUploader"
@@ -154,11 +145,7 @@ export default function CategoryUploadForm() {
                   setImageName(res[0].name);
                 }}
                 onUploadError={(error: Error) => {
-                  toast({
-                    title: "Upload Error",
-                    description: `Failed to upload image: ${error.message}`,
-                    className: "text-white bg-red-600",
-                  });
+                  showToast(`Failed to upload image: ${error.message}`, "error", 5000);
                 }}
               />
             </div>

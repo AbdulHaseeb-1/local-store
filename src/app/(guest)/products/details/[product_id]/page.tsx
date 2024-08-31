@@ -1,91 +1,159 @@
+"use client";
 import AddToCart from "@/components/guest/Buttons/addToCart";
-import ImageCarousel from "@/components/ImageCarousel"
-import { Button } from "@/components/ui/button"
+import ImageCarousel from "@/components/ImageCarousel";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/Context/toast";
 import axios from "@/lib/axios";
-import Image from "next/image"
+import { useEffect, useState } from "react";
+import { BsStarFill } from "react-icons/bs";
+import { CgShoppingCart } from "react-icons/cg";
 
-export default async function ProductDetails({ params }: { params: { product_id: string } }) {
-  const product_id = params.product_id
-  const decoded_id = atob(decodeURIComponent(product_id));
+export default function ProductDetails({
+  params,
+}: {
+  params: { product_id: string };
+}) {
+  const [product, setProduct]: any = useState({});
+  const { showToast } = useToast();
 
-  const response = await axios.get(`/products/productDetails?id=${decoded_id}`);
-  const product = JSON.parse(response.data.Product);
+  useEffect(() => {
+    async function getProduct() {
+      try {
+        const product_id = params.product_id;
+        const decoded_id = atob(decodeURIComponent(product_id));
 
+        const response = await axios.get(
+          `/products/productDetails?id=${decoded_id}`
+        );
+
+        const product = JSON.parse(response.data.Product);
+        setProduct(product);
+      } catch (error: any) {
+        console.error("Error fetching product:", error); // Log the error for debugging
+        showToast("500 | Something went wrong", "error");
+      }
+    }
+    getProduct();
+  }, [params.product_id]); // Include params.product_id in the dependency array
 
   return (
-    <div className="flex flex-col">
-      <section className="bg-gray-100 dark:bg-neutral-950 py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 gap-8 items-center">
-          <div className="m-auto">
-            <ImageCarousel images={product.images} />
-          </div>
-          <div className="space-y-6">
-            <h1 className="text-3xl md:text-4xl font-bold">{product.product_title}</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-lg line-clamp-5">
-              {product.product_description}
-            </p>
-            <div className="flex items-center gap-4">
-              <span className="text-3xl font-bold">Rs {product.price}</span>
-              <AddToCart product={product} />
-            </div>
+    <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
+      <div className="grid md:grid-cols-2 gap-8 items-start">
+        {/* Left Section: Image Carousel */}
+        <div className="space-y-4 flex justify-center">
+          <div className="  ">
+            <ImageCarousel images={product.images || []} />
           </div>
         </div>
-      </section>
-      <section className="py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid">
+
+        {/* Right Section: Product Details */}
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            {product.product_title}
+          </h1>
+          {/* <p className="text-xl text-muted-foreground">
+            Experience crystal clear audio with supreme comfort
+          </p> */}
+
+          <div className="flex items-center space-x-2">
+            {[...Array(5)].map((_, i) => (
+              <BsStarFill
+                key={i}
+                className={`w-5 h-5 ${
+                  i < 4 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                }`}
+              />
+            ))}
+            <span className="text-muted-foreground">(121 reviews)</span>
+          </div>
+
+          <div className="text-4xl font-bold">Rs {product.selling_price}</div>
+
+          <div className="flex space-x-4">
+            {/* <AddToCart
+              product={{
+                id: product.product_id,
+                image_url: product.images[0].image_url,
+                title: product.product_title,
+                category: product.categories.categoryName,
+                quantity: product.quantity,
+                price: product.selling_price.toString(),
+              }}
+            />{" "} */}
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs Section */}
+      <Tabs defaultValue="description" className="mt-12">
+        <TabsList>
+          <TabsTrigger value="description">Description</TabsTrigger>
+          <TabsTrigger value="specifications">Specifications</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="description" className="mt-6">
+          {product.product_description}
+        </TabsContent>
+
+        <TabsContent value="specifications" className="mt-6">
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Product Description</h2>
-              <p>{product.product_description}</p>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Driver Size
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">40mm</dd>
             </div>
-          </div>
-        </div>
-      </section>
-      <section className="bg-gray-100 dark:bg-neutral-950 py-12 md:py-20">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">Related Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <div className="bg-white dark:bg-gray-950 rounded-lg overflow-hidden shadow-lg">
-              <Image
-                src="/placeholder.svg"
-                alt="Related Product 1"
-                width={400}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4 space-y-2">
-                <h3 className="text-lg font-bold">Acme Wireless Earbuds</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Experience true wireless freedom with our Acme Wireless Earbuds.
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold">$79.99</span>
-                  <Button size="sm">Add to Cart</Button>
-                </div>
-              </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Frequency Response
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">20Hz - 20kHz</dd>
             </div>
-            <div className="bg-white dark:bg-gray-950 rounded-lg overflow-hidden shadow-lg">
-              <Image
-                src="/placeholder.svg"
-                alt="Related Product 4"
-                width={400}
-                height={300}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4 space-y-2">
-                <h3 className="text-lg font-bold">Acme Wireless Keyboard</h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Experience the ultimate in wireless productivity with our Acme Wireless Keyboard.
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xl font-bold">$59.99</span>
-                  <Button size="sm">Add to Cart</Button>
-                </div>
-              </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Impedance
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">32 Ohm</dd>
             </div>
-          </div>
-        </div>
-      </section>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Battery Life
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">Up to 30 hours</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Charging Time
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">2 hours</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Bluetooth Version
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">5.0</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Weight
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">250g</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-muted-foreground">
+                Warranty
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">2 years</dd>
+            </div>
+          </dl>
+        </TabsContent>
+
+        <TabsContent value="reviews" className="mt-6">
+          <p>Reviews content will go here.</p>
+        </TabsContent>
+      </Tabs>
     </div>
-  )
+  );
 }

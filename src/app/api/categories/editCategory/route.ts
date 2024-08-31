@@ -15,32 +15,26 @@ export async function PUT(req: NextRequest) {
     const categoryId = Number(form.get("categoryId"));
     const categoryName = form.get("categoryName")?.toString();
     const description = form.get("description")?.toString();
-    const categoryIcon = form.get("categoryIcon");
+    const imageUrl = form.get("imageUrl");
 
-    let updateData: any = {
+    let updatedData: any = {
       categoryName,
       description,
     };
-
-    const isValidImage = (image: any) =>
-      image instanceof File &&
-      (image.type === "image/png" ||
-        (image.type === "image/jpeg" && image.size < 4000000));
-
-    if (categoryIcon && isValidImage(categoryIcon)) {
-      // * Saving Image
-      const imagePath = await saveImage(categoryIcon);
-      if (imagePath) {
-        // * If Image is Saved
-        updateData = { ...updateData, imageUrl: imagePath }; // Update this line as per how you want to save the image
-      }
+    if (imageUrl) {
+      updatedData = {
+        ...updatedData,
+        imageUrl,
+      };
     }
+    console.log(imageUrl);
+    
 
     const result = await prisma.categories.update({
       where: {
         categoryId,
       },
-      data: updateData,
+      data: updatedData,
     });
     const updatedCategory = toJson(result);
 
@@ -54,27 +48,6 @@ export async function PUT(req: NextRequest) {
       { message: "Failed to update category" },
       { status: 500 }
     );
-  }
-}
-
-const getFileName = (file: any) => {
-  const now = new Date();
-  return `image_${now.getTime()}_${Math.random().toString(30)}`;
-};
-
-async function saveImage(image: any) {
-  try {
-    const buffer: any = Buffer.from(await image.arrayBuffer());
-    const filename = getFileName(image);
-    const imagePath = "/images/icons/" + filename + ".png";
-    const fullPath = path.join("public/images/icons/" + filename + ".png");
-
-    await writeFile(fullPath, buffer);
-
-    return imagePath;
-  } catch (err) {
-    console.error("Error saving image:", err);
-    throw new Error("Failed to save image");
   }
 }
 

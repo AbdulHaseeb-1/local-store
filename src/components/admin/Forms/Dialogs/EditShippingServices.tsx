@@ -13,34 +13,41 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/Context/toast";
 import axios from "@/lib/axios";
 import React, { FormEvent, useEffect, useState } from "react";
-export default function EditShippingInfo({
-  shippingFee,
+
+export default function EditShippingServices({
+  delivery_info = " ",
+  return_policy = " ",
   onClose,
   open,
   setAttributes,
 }: {
-  shippingFee: number;
+  delivery_info: string;
+  return_policy: string;
   onClose: () => void;
   open: React.ComponentState;
   setAttributes: React.SetStateAction<any>;
 }) {
   const [form, setForm] = useState({
-    shippingFee,
+    delivery_info,
+    return_policy,
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitAble, setIsSubmitAble] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
-    // Check if shippingFee is valid to enable submission
-    setIsSubmitAble(!!form.shippingFee);
-  }, [form.shippingFee]);
+    if (!form.delivery_info || !form.return_policy) {
+      setIsSubmitAble(false);
+    } else {
+      setIsSubmitAble(true);
+    }
+  }, [form]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prevState) => ({
+    setForm((prevState: any) => ({
       ...prevState,
       [name]: value,
     }));
@@ -50,11 +57,15 @@ export default function EditShippingInfo({
     event.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await axios.put("/attributes/editShippingInfo", form);
+      const response = await axios.put(
+        "/attributes/editShippingServices",
+        form
+      );
       if (response.status === 200) {
         setAttributes((prev: any) => ({
           ...prev,
-          shipping_fee: response.data.updatedInfo.shipping_fee,
+          return_policy: response.data.updatedServices.return_policy,
+          delivery_info: response.data.updatedServices.delivery_info,
         }));
         setIsSubmitting(false);
         showToast(response.data.message, "success", 5000);
@@ -77,17 +88,27 @@ export default function EditShippingInfo({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          {/* Use onSubmit for form submission */}
           <div className="grid gap-4 py-4">
             <div className="space-y-1">
-              <Label htmlFor="shippingFee" className="text-right">
-                Shipping Fee
+              <Label htmlFor="title" className="text-right">
+                Delivery Info
               </Label>
               <Input
-                type="number"
-                id="shippingFee"
-                name="shippingFee"
-                value={form.shippingFee}
+                id="delivery_info"
+                name="delivery_info"
+                value={form.delivery_info}
+                onChange={handleInputChange}
+                className="col-span-3"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="title" className="text-right">
+                Return Policy
+              </Label>
+              <Input
+                id="return_policy"
+                name="return_policy"
+                value={form.return_policy}
                 onChange={handleInputChange}
                 className="col-span-3"
               />

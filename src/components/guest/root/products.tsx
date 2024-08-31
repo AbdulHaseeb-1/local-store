@@ -44,10 +44,10 @@ export default function FeatureProducts() {
     return <FeatureProductSkeleton />;
   } else
     return (
-      <section className="py-12 md:py-20 lg:py-12 products">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-start justify-between gap-8 mb-8">
-            <div className="space-y-2 text-start pb-5">
+      <section className="  py-12 md:py-20 lg:py-12 ">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-between gap-8 mb-8">
+            <div className="space-y-2 text-center pb-5">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-center">
                 Featured Products
               </h2>
@@ -57,11 +57,11 @@ export default function FeatureProducts() {
             </div>
           </div>
 
-          <div className=" flex md:flex-wrap justify-center gap-3  ">
+          <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center  gap-3  ">
             {products.map((product: any) => (
               <Card
                 key={product.product_id}
-                className="small-card flex flex-col w-48 md:w-48 h-auto bg-white rounded-lg shadow-md dark:bg-neutral-900 dark:shadow-neutral-900 transition-all hover:shadow-lg"
+                className="small-card flex flex-col w-full md:w-48 h-auto bg-white rounded-lg shadow-md dark:bg-neutral-900 dark:shadow-neutral-900 transition-all hover:shadow-lg"
               >
                 <CardHeader className="small-header p-0 relative w-full h-40 md:h-48 justify-around">
                   <Image
@@ -73,7 +73,7 @@ export default function FeatureProducts() {
                   />
                 </CardHeader>
                 <CardContent className="px-2 py-2">
-                  <Link href={`/products/details/${product.product_id}`}>
+                  <Link href={`/products/details/${btoa(product.product_id)}`}>
                     <CardTitle className="hover:underline text-sm font-medium h-11 line-clamp-2 text-neutral-900 dark:text-white">
                       {product.product_title}
                     </CardTitle>
@@ -91,7 +91,7 @@ export default function FeatureProducts() {
                       <BsStarFill className="text-yellow-500" />
                       <BsStarFill className="text-yellow-500" />
                       <BsStarFill className="text-yellow-500" />
-                      <BiStar  />
+                      <BiStar />
                       <BiStar />
                     </div>
                   </div>

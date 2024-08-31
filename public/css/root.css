@@ -1,4 +1,4 @@
-
+/* 
 .faded::after {
   content: "";
   position: absolute;
@@ -6,13 +6,5 @@
   left: 0;
   right: 0;
   height: 20%;
-}
-@media (max-width: 320px) {
-  .small-card {
-    width: 140px;
-  }
-  .small-header {
-    width: 140px;
-  }
-}
+} */
 

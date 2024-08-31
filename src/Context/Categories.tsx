@@ -11,8 +11,8 @@ import {
 } from "react";
 
 interface CategoryContextType {
-  categories: Category[];
-  setCategories: Dispatch<SetStateAction<Category[]>>;
+  categories: Category[] | null;
+  setCategories: Dispatch<SetStateAction<Category[] | null>>;
   showModal: boolean;
   setShowModal: Dispatch<SetStateAction<boolean>>;
   newCategory: any;
@@ -43,9 +43,8 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   const [showModal, setShowModal] = useState(false);
   const [newCategory, setNewCategory] =
     useState<Partial<Category>>(initialStates);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[] | null>(null);
   const [error, setError] = useState<string>("");
-
   return (
     <CategoryContext.Provider
       value={{

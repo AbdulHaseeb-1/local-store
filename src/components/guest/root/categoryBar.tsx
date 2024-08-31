@@ -5,17 +5,20 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import CategorySkeleton from "@/components/skeletons/category";
+import { useToast } from "@/Context/toast";
 export default function CategoryBar() {
   const [categories, setCategories]: any = useState([]);
-  const [error, setError] = useState();
+  const { showToast } = useToast();
 
   useEffect(() => {
     async function getCategories() {
-      const response = await axios.get("/products/guest/categories");
-      const data = JSON.parse(response.data.categories);
-      console.log(data);
-
-      setCategories(data);
+      try {
+        const response = await axios.get("/products/guest/categories");
+        const data = JSON.parse(response.data.categories);
+        setCategories(data);
+      } catch (error: any) {
+        showToast("Something went wrong,Please try again later", "error", 5000);
+      }
     }
     getCategories();
   }, []);
@@ -30,8 +33,8 @@ export default function CategoryBar() {
         whileInView={{ opacity: 1 }}
         className="py-12 h-full"
       >
-        <div className="container px-4 md:px-6 mx-auto max-w-6xl">
-          <h2 className="text-2xl font-bold text-center mb-8 ">
+        <div className="px-4 md:px-6 mx-auto max-w-6xl">
+          <h2 className="text-2xl md:text-3xl  font-bold text-center mb-8 ">
             Shop by Category
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">

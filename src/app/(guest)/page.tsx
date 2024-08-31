@@ -7,6 +7,7 @@ import Services from "@/components/guest/root/services";
 import BestChoices from "@/components/guest/root/bestChoices";
 
 export default async function Home() {
+
   return (
     <div className="">
       <Hero />
