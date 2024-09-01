@@ -1,23 +1,9 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import {
-  CardContent,
-  Card,
-  CardHeader,
-  CardDescription,
-  CardFooter,
-  CardTitle,
-} from "@/components/ui/card";
-import Image from "next/image";
 import "@/../public/css/root.css";
 import axios from "@/lib/axios";
-import Link from "next/link";
-import AddToCart from "../Buttons/addToCart";
-import { Button } from "@/components/ui/button";
 import FeatureProductSkeleton from "@/components/skeletons/featureProducts";
-import { BsEye, BsStarFill } from "react-icons/bs";
-import { BiStar } from "react-icons/bi";
 import ProductCard_V from "../Custom/productCard_V";
 
 export default function FeatureProducts() {

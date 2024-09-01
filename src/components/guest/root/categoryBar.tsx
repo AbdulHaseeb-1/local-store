@@ -21,7 +21,8 @@ export default function CategoryBar() {
       }
     }
     getCategories();
-  }, [showToast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (categories.length == 0) {
     return <CategorySkeleton />;
