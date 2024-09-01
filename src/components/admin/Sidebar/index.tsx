@@ -36,7 +36,7 @@ export default function SideBar(props: {
       <div
         className={`fixed md:relative h-full overflow-hidden dark:bg-neutral-900 bg-white ${
           props.sidebarOpen ? "w-56" : "hidden md:block md:w-12"
-        } transition-all duration-300 border-r z-50 md:z-0`}
+        }  border-r z-50 md:z-0`}
       >
         <div
           className={`h-14 flex items-center justify-around md:justify-center  w-full `}

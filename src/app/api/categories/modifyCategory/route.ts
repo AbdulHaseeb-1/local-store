@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
 import { toJson } from "@/lib/helpers";
+import cloudinary from "@/lib/cloudinary";
 
 export async function DELETE(req: NextRequest) {
   try {
@@ -10,15 +11,25 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const { categoryId } = await req.json();
+    const { categoryId, imagePublicId } = await req.json();
+    console.log(categoryId,imagePublicId);
+    
 
-    if (!categoryId) {
-      return NextResponse.json(
-        { message: "Category ID is required" },
-        { status: 400 }
-      );
+    if (!categoryId || !imagePublicId) {
+      return NextResponse.json({ message: "Invalid Data" }, { status: 400 });
     }
 
+    const res = await cloudinary.uploader.destroy(imagePublicId, {
+      invalidate: true,
+    });
+    if (res.result !== "ok") {
+      return NextResponse.json(
+        {
+          message: "Failed to Destroy Image",
+        },
+        { status: 449 }
+      );
+    }
     await prisma.categories.delete({
       where: {
         categoryId,

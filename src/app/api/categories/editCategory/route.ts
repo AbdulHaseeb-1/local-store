@@ -1,8 +1,23 @@
 import { auth } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
-import path from "path";
-import { writeFile } from "fs/promises";
+import cloudinary from "@/lib/cloudinary";
+import { toJson } from "@/lib/helpers";
+
+// * Upload to Cloudinary Function
+const uploadToCloudinary = async (iconString: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        { upload_preset: "ml_default", folder: "categoryIcons" },
+        (error, result) => {
+          if (error) reject(new Error(error.message));
+          else resolve(result);
+        }
+      )
+      .end(iconString);
+  });
+};
 
 export async function PUT(req: NextRequest) {
   const session = await auth();
@@ -15,20 +30,38 @@ export async function PUT(req: NextRequest) {
     const categoryId = Number(form.get("categoryId"));
     const categoryName = form.get("categoryName")?.toString();
     const description = form.get("description")?.toString();
-    const imageUrl = form.get("imageUrl");
+    const icon: any = form.get("icon");
+    let iconString, prevImagePublicId: any;
 
     let updatedData: any = {
       categoryName,
       description,
     };
-    if (imageUrl) {
-      updatedData = {
-        ...updatedData,
-        imageUrl,
-      };
+
+    if (icon) {
+      iconString = JSON.parse(icon);
+      prevImagePublicId = form.get("prevImagePublicId");
+
+
+      const uploadResponse = await uploadToCloudinary(iconString);
+      if (!uploadResponse || !uploadResponse.secure_url) {
+        return NextResponse.json(
+          { message: "Image Upload Failed" },
+          { status: 500 }
+        );
+      }
+      await cloudinary.uploader.destroy(prevImagePublicId, {
+        invalidate: true,
+      });
+
+      if (iconString) {
+        updatedData = {
+          ...updatedData,
+          imageUrl: uploadResponse.secure_url,
+          imagePublicId: uploadResponse.public_id,
+        };
+      }
     }
-    console.log(imageUrl);
-    
 
     const result = await prisma.categories.update({
       where: {
@@ -50,10 +83,3 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
-
-const toJson = (param: any): string => {
-  // Return type for stricter checking
-  return JSON.stringify(param, (key, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  );
-};

@@ -150,7 +150,7 @@ export default function SpecialAttributes() {
         {/* Modals */}
         {isEditShippingInfoModalOpen && (
           <EditShippingInfo
-            shippingFee={attributes.shipping_fee}
+            shippingFee={attributes?.shipping_fee}
             onClose={closeEditShippingInfoModal} // Pass close handler to modal
             open={openEditShippingInfoModal}
             setAttributes={setAttributes}
@@ -159,8 +159,8 @@ export default function SpecialAttributes() {
 
         {isEditShippingServicesModalOpen && (
           <EditShippingServices
-            return_policy={attributes.return_policy}
-            delivery_info={attributes.delivery_info}
+            return_policy={attributes?.return_policy}
+            delivery_info={attributes?.delivery_info}
             onClose={closeEditShippingServicesModal} // Pass close handler to modal
             open={openEditShippingServicesModal}
             setAttributes={setAttributes}

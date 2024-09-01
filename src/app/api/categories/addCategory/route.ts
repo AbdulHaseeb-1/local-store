@@ -1,55 +1,75 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
 import prisma from "@/lib/prismaClient";
 import { auth } from "@/lib/auth";
+import cloudinary from "@/lib/cloudinary";
+import { toJson } from "@/lib/helpers";
 
+// * Upload to Cloudinary Function
+const uploadToCloudinary = async (iconString: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader
+      .upload_stream(
+        { upload_preset: "ml_default", folder: "categoryIcons" },
+        (error, result) => {
+          if (error) reject(new Error(error.message));
+          else resolve(result);
+        }
+      )
+      .end(iconString);
+  });
+};
+
+// * POST Method Handler
 export async function POST(req: NextRequest) {
   try {
     // * Validation Admin Session
     const session = await auth();
     if (!session) {
-      NextResponse.json({ message: "UnAuthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     // * Extracting FormData
     const formData = await req.formData();
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
+    const icon = formData.get("icon") as string;
 
-    const name: any = formData.get("name");
-    const description: any = formData.get("description");
-    const imageUrl: any = formData.get("imageUrl");
-
-      console.log(name,description,imageUrl);
-      
-
-
-    // * Validating Data
-    if (!name && !description && !imageUrl) {
+    // * Validating Data Before Upload
+    if (!name || !description || !icon) {
       return NextResponse.json({ message: "Invalid Data" }, { status: 400 });
     }
+
+    const iconString = JSON.parse(icon);
+
+    // * Upload Image to Cloudinary
+    const uploadResponse = await uploadToCloudinary(iconString);
+
+    if (!uploadResponse || !uploadResponse.secure_url) {
+      return NextResponse.json(
+        { message: "Image Upload Failed" },
+        { status: 500 }
+      );
+    }
+
+    // * Save to Prisma
 
     const result = await prisma.categories.create({
       data: {
         categoryName: name,
         description,
-        imageUrl: imageUrl,
+        imageUrl: uploadResponse.secure_url,
+        imagePublicId:uploadResponse.public_id,
       },
     });
-    // * Converting to JSON for client transfer
+
+    // * Convert result to JSON
     const category = toJson(result);
-    // * Returning Response
+
+    // * Return Response
     return NextResponse.json({ category }, { status: 200 });
-  } catch (err) {
-    //* Catch Block
+  } catch (err: any) {
+    // * Error Handling
     console.error("Error:", err);
-    return NextResponse.json({ message: "Server Error" }, { status: 500 });
+    return NextResponse.json({ message: err.message }, { status: 500 });
   }
 }
-
-// *  ---------------------------------
-const toJson = (param: any): string => {
-  // Return type for stricter checking
-  return JSON.stringify(param, (key, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  );
-};

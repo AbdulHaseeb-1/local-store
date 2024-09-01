@@ -1,7 +1,8 @@
-import Joi from "joi";
+import Joi, { optional } from "joi";
 
 const ProductValidator = Joi.object({
     title: Joi.string().min(10).required(),
+    subTitle:Joi.string(),
     description: Joi.string().required(),
     category: Joi.string(),
     brand: Joi.string(),

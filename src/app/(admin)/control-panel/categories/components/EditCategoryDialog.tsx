@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,9 @@ import axios from "@/lib/axios";
 import { useCategories } from "@/Context/Categories";
 import { UploadButton } from "@/components/uploadthings";
 import { useToast } from "@/Context/toast";
+import { useUI } from "@/Context/UI";
+import { UIContextType } from "@/types/ui";
+import { log } from "console";
 
 export default function EditCategoryDialog({
   open,
@@ -25,42 +28,72 @@ export default function EditCategoryDialog({
     categoryId: categoryData.categoryId,
     categoryName: categoryData.categoryName,
     description: categoryData.description,
-    prevIconURL: categoryData.imageUrl,
-    imageUrl: "",
+    prevImagePublicId: categoryData.imagePublicId,
+    icon: null,
   });
   const { setCategories }: any = useCategories();
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [imageName, setImageName] = useState("");
-  const [isSubmitAble, setIsSubmitAble] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSubmitAble, setIsSubmitAble, setIsSubmitting, isSubmitting } =
+    useUI() as UIContextType;
   const { showToast } = useToast();
 
   useEffect(() => {
-    setIsSubmitAble(
-      !!(category.categoryName && category.description )
-    );
-  }, [category]);
+    setIsSubmitAble(!!(category.categoryName && category.description));
+  }, [category, setIsSubmitAble]);
 
-  function handleChange(e: ChangeEvent<any>) {
-    const { name, value, type } = e.target;
-    setCategory((prev: any) => ({ ...prev, [name]: value }));
-  }
+  const handleChange = useCallback(
+    (e: any) => {
+      const { name, value, type } = e.target;
+      if (type === "file") {
+        const file = e.target.files[0];
+        setCategory((prevState: any) => ({
+          ...prevState,
+          [name]: file,
+        }));
+      } else {
+        setCategory((prevState: any) => ({
+          ...prevState,
+          [name]: value,
+        }));
+      }
+    },
+    [setCategory]
+  );
+
+  const readIconAsBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result) {
+          resolve(reader.result.toString());
+        } else {
+          reject(new Error("Failed to read icon"));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
 
   async function handleSubmit() {
+    setIsSubmitting(true);
     if (!category.categoryName || !category.description) {
       showToast("Category Name is required.", "error", 5000);
       return;
     }
 
-    const form = new FormData();
-    form.set("categoryId", category.categoryId);
-    form.set("categoryName", category.categoryName);
-    form.set("description", category.description);
-    form.set("imageUrl", category.imageUrl);
-
     try {
-      const response = await axios.put("/categories/editCategory", form);
+      const form = new FormData();
+      form.set("categoryId", category.categoryId);
+      form.set("categoryName", category.categoryName);
+      form.set("description", category.description);
 
+      if (category.icon) {
+        const base64Icon = await readIconAsBase64(category.icon); // Await reading the icon
+        form.set("icon", JSON.stringify(base64Icon)); // Set the icon after reading is complete
+        form.set("prevImagePublicId", category.prevImagePublicId);
+      }
+
+      const response = await axios.put("/categories/editCategory", form);
       if (response.status === 200) {
         const updatedCategory = JSON.parse(response.data.data);
         setCategories((prevCategories: any) =>
@@ -70,10 +103,12 @@ export default function EditCategoryDialog({
               : c;
           })
         );
-        showToast(response.data.message, "success", 5000);
         onClose();
+        setIsSubmitting(false);
+        showToast(response.data.message, "success", 5000);
       }
     } catch (error: any) {
+      setIsSubmitting(false);
       console.error("Error updating category:", error);
       showToast(error.message, "error", 5000);
     }
@@ -114,32 +149,11 @@ export default function EditCategoryDialog({
               <Label htmlFor="image" className="my-auto text-right  w-20">
                 Image
               </Label>
-              <UploadButton
-                appearance={{
-                  container: "",
-                  button: "px-6 bg-primary",
-                  allowedContent: "text-blue-400",
-                }}
-                content={{
-                  allowedContent({ isUploading }) {
-                    return isUploading
-                      ? "Uploading..."
-                      : imageName || "Allowed : PNG,JPG";
-                  },
-                }}
-                endpoint="categoryImageUploader"
-                onClientUploadComplete={(res) => {
-                  const imageUrl = res[0].url; // Assuming res is an array and has the URL
-                  setCategory((prevState: any) => ({
-                    ...prevState,
-                    imageUrl: imageUrl,
-                  }));
-                  setUploadedImageUrl(imageUrl); // Track uploaded image URL
-                  setImageName(res[0].name);
-                }}
-                onUploadError={(error: Error) => {
-                  showToast(`Failed to upload image: ${error.message}`, "error", 5000);
-                }}
+              <Input
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                name="icon"
+                onChange={handleChange}
               />
             </div>
             <p className="opacity-40 text-xs mt-1 ">
@@ -150,11 +164,11 @@ export default function EditCategoryDialog({
           {/* Additional form fields as needed */}
           <div className="mt-4">
             <Button
-              type="button"
+              type="submit"
+              disabled={!isSubmitAble || isSubmitting}
               onClick={handleSubmit}
-              disabled={!isSubmitAble}
             >
-              Save Changes
+              {isSubmitting ? "Submitting..." : "Save Category"}
             </Button>
             <Button variant={"secondary"} onClick={onClose}>
               Cancel

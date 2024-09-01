@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import FeatureProductSkeleton from "@/components/skeletons/featureProducts";
 import { BsEye, BsStarFill } from "react-icons/bs";
 import { BiStar } from "react-icons/bi";
+import ProductCard_V from "../Custom/productCard_V";
 
 export default function FeatureProducts() {
   // ? ============ States ===============================
@@ -57,61 +58,9 @@ export default function FeatureProducts() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:flex md:flex-wrap justify-center  gap-3  ">
+          <div className="grid grid-cols-2  md:flex md:flex-wrap justify-center  gap-3  ">
             {products.map((product: any) => (
-              <Card
-                key={product.product_id}
-                className="small-card flex flex-col w-full md:w-48 h-auto bg-white rounded-lg shadow-md dark:bg-neutral-900 dark:shadow-neutral-900 transition-all hover:shadow-lg"
-              >
-                <CardHeader className="small-header p-0 relative w-full h-40 md:h-48 justify-around">
-                  <Image
-                    alt={`Image of ${product.product_title}`}
-                    className="object-contain h-full w-full rounded-t-lg focus:outline-none"
-                    src={product.images[0].image_url}
-                    width={1000}
-                    height={1000}
-                  />
-                </CardHeader>
-                <CardContent className="px-2 py-2">
-                  <Link href={`/products/details/${btoa(product.product_id)}`}>
-                    <CardTitle className="hover:underline text-sm font-medium h-11 line-clamp-2 text-neutral-900 dark:text-white">
-                      {product.product_title}
-                    </CardTitle>
-                  </Link>
-                  <CardDescription className="h-5 line-clamp-1 text-xs text-neutral-700 dark:text-neutral-400">
-                    {product.categories.categoryName}
-                  </CardDescription>
-                </CardContent>
-                <CardFooter className="flex flex-col md:flex-row justify-between font-semibold text-sm px-4  gap-2 pt-2">
-                  <div className="flex flex-col ">
-                    <span className="text-white text-md">
-                      Rs. {product.selling_price.toString()}
-                    </span>
-                    <div className="flex">
-                      <BsStarFill className="text-yellow-500" />
-                      <BsStarFill className="text-yellow-500" />
-                      <BsStarFill className="text-yellow-500" />
-                      <BiStar />
-                      <BiStar />
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <AddToCart
-                      product={{
-                        id: product.product_id.toString(),
-                        image_url: product.images[0].image_url,
-                        title: product.product_title,
-                        category: product.categories.categoryName,
-                        quantity: product.quantity,
-                        price: product.selling_price.toString(),
-                      }}
-                    />
-                    <Button size={"icon"} variant={"secondary"}>
-                      <BsEye size={20} />
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
+              <ProductCard_V key={product.product_id} product={product} />
             ))}
           </div>
         </div>

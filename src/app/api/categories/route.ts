@@ -2,13 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prismaClient";
+import { toJson } from "@/lib/helpers";
 
-const toJson = (param: any): string => {
-  // Return type for stricter checking
-  return JSON.stringify(param, (key, value) =>
-    typeof value === "bigint" ? value.toString() : value
-  );
-};
+
 export async function GET(req: NextRequest) {
   try {
     const categories = await prisma.categories.findMany();

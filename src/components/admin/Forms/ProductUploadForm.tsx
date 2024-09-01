@@ -106,7 +106,6 @@ export default function ProductUploadForm() {
             setIsSubmitting(false);
             console.log(err);
             return;
-
         }
         if (
             !(
@@ -206,7 +205,7 @@ export default function ProductUploadForm() {
                                 <div className="space-y-2">
                                     <div className="flex flex-col space-y-1">
                                         <label
-                                            htmlFor="productName"
+                                            htmlFor="title"
                                             className={clsx("font-medium", {
                                                 "text-red-400": error && error.path[0] === "title",
                                             })}
@@ -215,7 +214,7 @@ export default function ProductUploadForm() {
                                         </label>
                                         <Input
                                             onChange={handleChange}
-                                            id="productName"
+                                            id="title"
                                             placeholder="High quality Leather Jackets ..."
                                             name="title"
                                             className={clsx("", {
@@ -224,6 +223,31 @@ export default function ProductUploadForm() {
                                             })}
                                         />
                                         {error && error.path[0] === "title" && (
+                                            <span className="text-xs text-red-400">
+                                                {error.message}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex flex-col space-y-1">
+                                        <label
+                                            htmlFor="subTitle"
+                                            className={clsx("font-medium", {
+                                                "text-red-400": error && error.path[0] === "subTitle",
+                                            })}
+                                        >
+                                           Product SubTitle
+                                        </label>
+                                        <Input
+                                            onChange={handleChange}
+                                            id="subtitle"
+                                            placeholder="High quality Leather Jackets ..."
+                                            name="subTitle"
+                                            className={clsx("", {
+                                                "border border-red-400":
+                                                    error && error.path[0] === "subTitle",
+                                            })}
+                                        />
+                                        {error && error.path[0] === "subTitle" && (
                                             <span className="text-xs text-red-400">
                                                 {error.message}
                                             </span>

@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 type ToastProps = {
   message: string;
@@ -8,7 +9,12 @@ type ToastProps = {
   onClose: () => void; // Function to close the toast
 };
 
-const Toast: React.FC<ToastProps> = ({ message, type, duration = 5000, onClose }) => {
+const Toast: React.FC<ToastProps> = ({
+  message,
+  type,
+  duration = 5000,
+  onClose,
+}) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -31,8 +37,11 @@ const Toast: React.FC<ToastProps> = ({ message, type, duration = 5000, onClose }
 
   return (
     visible && (
-      <div
-        className={`fixed rounded-t-sm top-4 left-1/2 transform -translate-x-1/2 p-3 min-w-72 rounded shadow-md ${toastTypeClass[type]} z-50`}
+      <motion.div
+        initial={{ x: -144, y: -50, opacity: 0,borderRadius:5 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay: 0.5 }}
+        className={` fixed top-4 left-1/2 transform -translate-x-1/2 p-3 min-w-72  shadow-md ${toastTypeClass[type]} z-50`}
       >
         <div className="flex items-center justify-between">
           <span>{message}</span>
@@ -40,7 +49,7 @@ const Toast: React.FC<ToastProps> = ({ message, type, duration = 5000, onClose }
             ✖
           </button>
         </div>
-      </div>
+      </motion.div>
     )
   );
 };

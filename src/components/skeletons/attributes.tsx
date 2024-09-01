@@ -25,7 +25,7 @@ export default function AttributesSkeleton() {
                   <CardTitle>Shipping Fees</CardTitle>
                   <CardDescription>Manage your shipping fees</CardDescription>
                 </div>
-                <Skeleton className="h-5 w-5 bg-neutral-800" />
+                <Skeleton className="h-5 w-5 bg-neutral-200 dark:bg-neutral-800" />
               </div>
             </CardHeader>
             <CardContent>
@@ -35,7 +35,7 @@ export default function AttributesSkeleton() {
                     <TableCell className="text-key-foreground font-bold min-w-32">
                       Shipping Fee:
                     </TableCell>
-                    <TableCell><Skeleton className="h-6 w-16 bg-neutral-800" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-16 bg-neutral-200 dark:bg-neutral-800" /></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -50,7 +50,7 @@ export default function AttributesSkeleton() {
                     Customize Your Customers Order Creation
                   </CardDescription>
                 </div>
-                <Skeleton className="h-5 w-5 bg-neutral-800" />
+                <Skeleton className="h-5 w-5 bg-neutral-200 dark:bg-neutral-800" />
               </div>
             </CardHeader>
             <CardContent>
@@ -60,13 +60,13 @@ export default function AttributesSkeleton() {
                     <TableCell className="text-key-foreground font-bold min-w-32">
                       Delivery Info:
                     </TableCell>
-                    <TableCell><Skeleton className="h-5 w-24 bg-neutral-800" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-24 bg-neutral-200 dark:bg-neutral-800" /></TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-key-foreground font-bold">
                       Return Policy:
                     </TableCell>
-                    <TableCell><Skeleton className="h-5 w-24 bg-neutral-800" /></TableCell>
+                    <TableCell><Skeleton className="h-5 w-24 bg-neutral-200 dark:bg-neutral-800" /></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

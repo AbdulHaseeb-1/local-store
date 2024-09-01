@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,74 +14,124 @@ import { Button } from "@/components/ui/button";
 import { useCategories } from "@/Context/Categories";
 import axios from "@/lib/axios";
 import { Separator } from "@/components/ui/separator";
-import { UploadButton } from "@/components/uploadthings";
 import { useToast } from "@/Context/toast";
+import { useUI } from "@/Context/UI";
+import { UIContextType } from "@/types/ui";
 
 interface Category {
   name: string;
   description: string;
+  icon: File | null;
 }
 
-export default function CategoryUploadForm() {
-  // * =========== States ===============
-  const { categories, setCategories }: any = useCategories();
-  const { showModal, setShowModal, setNewCategory, newCategory }: any =
-    useCategories();
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [imageName, setImageName] = useState("");
-  const [isSubmitAble, setIsSubmitAble] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const CategoryUploadForm: React.FC = () => {
+  // * =========== State and Context ===============
+  const {
+    setCategories,
+    showModal,
+    setShowModal,
+    setNewCategory,
+    newCategory,
+  } = useCategories() as any;
+  const { isSubmitAble, setIsSubmitAble, isSubmitting, setIsSubmitting } =
+    useUI() as UIContextType;
   const { showToast } = useToast();
 
+  // * ========== Effects ==========
   useEffect(() => {
-    setIsSubmitAble(
-      !!(newCategory.name && newCategory.description && uploadedImageUrl)
+    const isFormValid = !!(
+      newCategory.name &&
+      newCategory.description &&
+      newCategory.icon
     );
-  }, [newCategory, uploadedImageUrl]);
+    setIsSubmitAble(isFormValid);
+  }, [newCategory, setIsSubmitAble]);
 
-  // * ============ Changes ====================
-  const handleInputChange = useCallback(
+  // * ========== Handlers ==========
+  const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setNewCategory((prevState: Category) => ({
-        ...prevState,
-        [name]: value,
-      }));
+      const { name, value, type } = e.target;
+      if (type === "file" && e.target instanceof HTMLInputElement) {
+        const file = e.target.files?.[0] || null;
+        setNewCategory((prevState: Category) => ({
+          ...prevState,
+          [name]: file,
+        }));
+      } else {
+        setNewCategory((prevState: Category) => ({
+          ...prevState,
+          [name]: value,
+        }));
+      }
     },
     [setNewCategory]
   );
 
   const handleCloseModal = useCallback(() => {
     setShowModal(false);
-    setNewCategory({ name: "", description: "", imageUrl: "" });
-    setUploadedImageUrl("");
-    setImageName("");
+    setNewCategory({ name: "", description: "", icon: null });
   }, [setShowModal, setNewCategory]);
 
-  const handleSaveCategory = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
+  const handleSaveCategory = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
       setIsSubmitting(true);
+
       const formData = new FormData();
       formData.append("name", newCategory.name);
       formData.append("description", newCategory.description);
-      formData.append("imageUrl", newCategory.imageUrl);
-      const response = await axios.post("/categories/addCategory", formData);
 
-      const category = JSON.parse(response.data.category);
-
-      if (response.status === 200) {
+      try {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          try {
+            formData.append("icon", JSON.stringify(reader.result));
+   
+            const response = await axios.post(
+              "/categories/addCategory",
+              formData
+            );
+            if (response.status === 200) {
+              handleCloseModal();
+              const category = JSON.parse(response.data.category);
+              setCategories((prevCategories: Category[]) => [
+                ...prevCategories,
+                category,
+              ]);
+              showToast("Category added successfully", "success", 5000);
+            } else {
+              throw new Error(
+                response.data.message || "Failed to add category"
+              );
+            }
+          } catch (error: any) {
+            showToast(
+              error.response?.data?.message ||
+                error.message ||
+                "Unexpected error occurred",
+              "error",
+              5000
+            );
+          } finally {
+            setIsSubmitting(false);
+          }
+        };
+        reader.readAsDataURL(newCategory.icon!);
+      } catch (error: any) {
+        showToast(
+          error.response?.data?.message ||
+            error.message ||
+            "Unexpected error occurred",
+          "error",
+          5000
+        );
         setIsSubmitting(false);
-        showToast("Category added successfully", "success", 5000);
-        setCategories([...categories, category]);
-        handleCloseModal();
       }
-    } catch (e: any) {
-      setIsSubmitting(false);
-      showToast(e.message, "error", 5000);
-    }
-  };
+    },
+    [newCategory, setCategories, showToast, setIsSubmitting, handleCloseModal]
+  );
 
+  // * ========== Render ==========
   return (
     <Dialog open={showModal} onOpenChange={handleCloseModal}>
       <DialogContent className="sm:max-w-[425px]">
@@ -101,7 +151,7 @@ export default function CategoryUploadForm() {
                 id="title"
                 name="name"
                 value={newCategory.name || ""}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className="col-span-3"
               />
             </div>
@@ -113,54 +163,32 @@ export default function CategoryUploadForm() {
                 id="description"
                 name="description"
                 value={newCategory.description || ""}
-                onChange={handleInputChange}
+                onChange={handleChange}
                 className="col-span-3"
               />
             </div>
             <div className="flex gap-4 text-center">
-              <Label htmlFor="image" className="my-auto text-right  w-20">
+              <Label htmlFor="image" className="my-auto text-right w-20">
                 Image
               </Label>
-              <UploadButton
-                appearance={{
-                  container: "",
-                  button: "px-6 bg-primary",
-                  allowedContent: "text-blue-400",
-                }}
-                content={{
-                  allowedContent({ isUploading }) {
-                    return isUploading
-                      ? " Uploading... 🫸"
-                      : `${imageName}` || "Allowed : PNG,JPG";
-                  },
-                }}
-                endpoint="categoryImageUploader"
-                onClientUploadComplete={(res) => {
-                  const imageUrl = res[0].url; // Assuming res is an array and has the URL
-                  setNewCategory((prevState: Category) => ({
-                    ...prevState,
-                    imageUrl: imageUrl,
-                  }));
-                  setUploadedImageUrl(imageUrl); // Track uploaded image URL
-                  setImageName(res[0].name);
-                }}
-                onUploadError={(error: Error) => {
-                  showToast(`Failed to upload image: ${error.message}`, "error", 5000);
-                }}
+              <Input
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                name="icon"
+                onChange={handleChange}
               />
             </div>
           </div>
           <Separator className="my-1" />
           <div className="flex gap-3 justify-end">
-            {/* <Button variant="outline" onClick={handleCloseModal}>
-              Cancel
-            </Button> */}
             <Button type="submit" disabled={!isSubmitAble || isSubmitting}>
-              {!isSubmitting ? "Save Category" : "Submitting..."}
+              {isSubmitting ? "Submitting..." : "Save Category"}
             </Button>
           </div>
         </form>
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default CategoryUploadForm;

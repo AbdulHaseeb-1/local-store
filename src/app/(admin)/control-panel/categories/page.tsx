@@ -47,12 +47,14 @@ export default function Component() {
     setShowModal(true);
   };
 
+
+
   const handleEditCategory = (category: any) => {
     setSelectedCategory(category);
     setEditDialogOpen(true);
   };
 
-  async function ConfirmDelete(categoryId: number) {
+  async function ConfirmDelete(categoryId: number, imagePublicId: string) {
     const isConfirm = confirm(
       "Deleting this category will also remove all products related to this category. Are you sure you want to delete?"
     );
@@ -61,6 +63,7 @@ export default function Component() {
         const response = await axios.delete("/categories/modifyCategory", {
           data: {
             categoryId,
+            imagePublicId,
           },
         });
         const message = response.data.message;
@@ -174,7 +177,10 @@ export default function Component() {
                     <DropdownMenuItem
                       className="text-red-700"
                       onClick={() => {
-                        ConfirmDelete(category.categoryId);
+                        ConfirmDelete(
+                          category.categoryId,
+                          category.imagePublicId
+                        );
                       }}
                     >
                       Delete

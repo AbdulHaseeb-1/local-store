@@ -3,27 +3,29 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model categories {
-  categoryId   BigInt     @id @default(autoincrement()) @db.UnsignedBigInt
-  categoryName String     @db.VarChar(255)
-  description  String?    @db.Text
-  imageUrl     String     @db.VarChar(255)
-  created_at   DateTime   @default(now()) @db.Timestamp(0)
-  is_active    Boolean    @default(true)
-  updated_ata  DateTime   @default(now()) @db.Timestamp(0)
-  products     products[]
+  categoryId    BigInt     @id @default(autoincrement())
+  categoryName  String     @db.VarChar(255)
+  description   String?
+  imageUrl      String     @db.VarChar(255)
+  created_at    DateTime   @default(now())
+  is_active     Boolean    @default(true)
+  updated_ata   DateTime   @default(now())
+  imagePublicId String?
+  products      products[]
 }
 
 model customers {
-  customer_id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  user_id             BigInt   @unique(map: "user_id")
+  customer_id         BigInt   @id @default(autoincrement())
+  user_id             BigInt   @unique
   first_name          String   @db.VarChar(255)
   last_name           String   @db.VarChar(255)
-  email               String   @unique(map: "email") @db.VarChar(100)
+  email               String   @unique @db.VarChar(100)
   phone_number        String?  @db.VarChar(13)
   shipping_address_id BigInt?
   billing_address_id  BigInt?
@@ -31,125 +33,124 @@ model customers {
 }
 
 model images {
-  image_id   BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  product_id BigInt?   @db.UnsignedBigInt
+  image_id   BigInt    @id @default(autoincrement())
+  product_id BigInt?
   image_url  String    @db.VarChar(255)
-  products   products? @relation(fields: [product_id], references: [product_id], onDelete: Cascade, map: "images_ibfk_1")
+  products   products? @relation(fields: [product_id], references: [product_id], onDelete: Cascade)
 
-  @@index([product_id], map: "product_id")
+  @@index([product_id])
 }
 
 model order_items {
-  order_item_id BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  order_id      BigInt   @db.UnsignedBigInt
-  product_id    BigInt   @db.UnsignedBigInt
+  order_item_id BigInt   @id @default(autoincrement())
+  order_id      BigInt
+  product_id    BigInt
   quantity      Int      @default(1)
   unit_price    Decimal  @db.Decimal(10, 2)
   total_price   Decimal  @db.Decimal(10, 2)
-  products      products @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "order_items_ibfk_1")
-  orders        orders   @relation(fields: [order_id], references: [order_id], onDelete: Cascade, map: "order_items_ibfk_2")
+  orders        orders   @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+  products      products @relation(fields: [product_id], references: [product_id], onUpdate: Restrict)
 
-  @@index([product_id], map: "product_id")
-  @@index([order_id], map: "order_items_ibfk_2")
+  @@index([product_id])
+  @@index([order_id])
 }
 
 model orders {
-  order_id         BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  order_id         BigInt               @id @default(autoincrement())
   customer         String               @db.VarChar(100)
   phone            String               @db.VarChar(11)
   total_amount     Decimal              @db.Decimal(10, 2)
-  order_address_id BigInt?              @db.UnsignedBigInt
+  order_address_id BigInt?
   order_status     orders_order_status? @default(Pending)
   paid             Boolean              @default(false)
-  order_date       DateTime             @default(now()) @db.Timestamp(0)
+  order_date       DateTime             @default(now())
   order_items      order_items[]
-  order_address    order_address?       @relation(fields: [order_address_id], references: [order_address_id], onUpdate: SetNull, map: "orders_ibfk_1")
+  order_address    order_address?       @relation(fields: [order_address_id], references: [order_address_id], onUpdate: SetNull)
 
-  @@index([order_address_id], map: "order_address_id")
+  @@index([order_address_id])
 }
 
 model payment_methods {
-  payment_method_id    BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  payment_method_name  String   @unique(map: "payment_method_name") @db.VarChar(255)
-  description          String?  @db.Text
+  payment_method_id    BigInt   @id @default(autoincrement())
+  payment_method_name  String   @unique @db.VarChar(255)
+  description          String?
   payment_processor_id BigInt?
   is_active            Boolean? @default(true)
 }
 
 model products {
-  product_id               BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
+  product_id               BigInt                     @id @default(autoincrement())
   product_title            String                     @db.VarChar(255)
-  product_description      String                     @db.Text
+  product_description      String
   brand_name               String                     @db.VarChar(100)
-  category_id              BigInt?                    @db.UnsignedBigInt
+  category_id              BigInt?
   purchase_price           Decimal                    @default(0.00) @db.Decimal(10, 2)
   selling_price            Decimal                    @default(0.00) @db.Decimal(10, 2)
   quantity                 Int                        @default(1)
-  sold_count               Int                        @default(0) @db.UnsignedInt
-  product_views            Int                        @default(0) @db.UnsignedInt
+  sold_count               Int                        @default(0)
+  product_views            Int                        @default(0)
   is_active                Boolean                    @default(true)
-  created_at               DateTime                   @default(now()) @db.Timestamp(0)
-  updated_at               DateTime                   @default(now()) @db.Timestamp(0)
+  created_at               DateTime                   @default(now())
+  updated_at               DateTime                   @default(now())
   is_featured              Boolean                    @default(false)
   admin_id                 BigInt
   stock_quantity           Int                        @default(0)
   images                   images[]
   order_items              order_items[]
   product_attribute_values product_attribute_values[]
-  categories               categories?                @relation(fields: [category_id], references: [categoryId], onDelete: Cascade, map: "products_ibfk_1")
+  categories               categories?                @relation(fields: [category_id], references: [categoryId], onDelete: Cascade)
 
-  @@index([category_id], map: "category_id")
+  @@index([category_id])
 }
 
 model users {
   user_id           BigInt      @id @default(autoincrement())
   username          String      @db.VarChar(60)
-  email             String      @unique(map: "email") @db.VarChar(255)
+  email             String      @unique @db.VarChar(255)
   password          String      @db.VarChar(255)
-  registration_date DateTime    @default(now()) @db.DateTime(0)
-  last_login_date   DateTime    @default(now()) @db.DateTime(0)
+  registration_date DateTime    @default(now())
+  last_login_date   DateTime    @default(now())
   is_active         Boolean     @default(true)
   role              users_role? @default(admin)
 }
 
 model order_address {
-  order_address_id BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  order_address_id BigInt   @id @default(autoincrement())
   city             String   @db.VarChar(100)
   state            String   @db.VarChar(100)
-  address          String   @db.Text
+  address          String
   orders           orders[]
 }
 
 model product_attributes {
-  attribute_id             BigInt                     @id @default(autoincrement()) @db.UnsignedBigInt
-  attribute_name           String                     @unique(map: "attribute_name") @db.VarChar(50)
+  attribute_id             BigInt                     @id @default(autoincrement())
+  attribute_name           String                     @unique @db.VarChar(50)
   product_attribute_values product_attribute_values[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model special_attributes {
-  id            Int     @id @default(autoincrement()) @db.UnsignedTinyInt
-  shipping_fee  Int?    @default(0) @db.UnsignedInt
-  return_policy String? @db.Text
+  id            Int     @id @default(autoincrement())
+  shipping_fee  Int?    @default(0)
+  return_policy String?
   delivery_info String? @db.VarChar(255)
 }
 
 model product_attribute_values {
-  id                 BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
-  product_id         BigInt             @db.UnsignedBigInt
-  attribute_id       BigInt             @db.UnsignedBigInt
+  id                 BigInt             @id @default(autoincrement())
+  product_id         BigInt
+  attribute_id       BigInt
   value              String             @db.VarChar(100)
-  products           products           @relation(fields: [product_id], references: [product_id], onUpdate: Restrict, map: "product_attribute_values_ibfk_1")
-  product_attributes product_attributes @relation(fields: [attribute_id], references: [attribute_id], onUpdate: Restrict, map: "product_attribute_values_ibfk_2")
+  product_attributes product_attributes @relation(fields: [attribute_id], references: [attribute_id], onUpdate: Restrict)
+  products           products           @relation(fields: [product_id], references: [product_id], onUpdate: Restrict)
 
-  @@index([attribute_id], map: "attribute_id")
-  @@index([product_id], map: "product_id")
+  @@index([attribute_id])
+  @@index([product_id])
 }
 
 model websitevisitors {
   VisitorID      Int       @id @default(autoincrement())
   IPAddress      String?   @db.VarChar(45)
-  VisitTimestamp DateTime? @db.DateTime(0)
+  VisitTimestamp DateTime? @default(now())
   PageVisited    String?   @db.VarChar(255)
   UserAgent      String?   @db.VarChar(255)
   Referrer       String?   @db.VarChar(255)

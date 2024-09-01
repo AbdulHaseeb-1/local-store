@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      take: 6,
     });
     if (!products) {
       return NextResponse.json(

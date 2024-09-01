@@ -7,7 +7,6 @@ import {
   createContext,
   Dispatch,
   SetStateAction,
-  useEffect,
 } from "react";
 
 interface CategoryContextType {
@@ -17,22 +16,24 @@ interface CategoryContextType {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   newCategory: any;
   setNewCategory: Dispatch<SetStateAction<any>>;
-  error: string;
-  setError: Dispatch<SetStateAction<any>>;
+  // error: string;
+  // setError: Dispatch<SetStateAction<any>>;
 }
 
 interface Category {
   id: number | null;
   name: string;
   description: string;
-  image: any;
+  icon: null | File;
+  imagePublicId: string;
 }
 
 const initialStates: Category = {
   id: null,
   name: "",
   description: "",
-  image: null,
+  icon: null,
+  imagePublicId: "",
 };
 
 const CategoryContext = createContext<CategoryContextType | undefined>(
@@ -44,7 +45,7 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
   const [newCategory, setNewCategory] =
     useState<Partial<Category>>(initialStates);
   const [categories, setCategories] = useState<Category[] | null>(null);
-  const [error, setError] = useState<string>("");
+  // const [error, setError] = useState<string>("");
   return (
     <CategoryContext.Provider
       value={{
@@ -54,8 +55,8 @@ export function CategoryProvider({ children }: { children: ReactNode }) {
         setShowModal,
         newCategory,
         setNewCategory,
-        error,
-        setError,
+        // error,
+        // setError,
       }}
     >
       {children}

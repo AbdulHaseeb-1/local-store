@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={`${inter.className} scroll-smooth `}>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <SessionProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <CategoryProvider>
               <ProductFormProvider>
                 <UIProvider>
