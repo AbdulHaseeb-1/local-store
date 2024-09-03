@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ categories: json }, { status: 200 });
   } catch (error) {
     console.log("Error :", error);
-    return NextResponse.json({ message: "Server Error" }, { status: 500 });
+    return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
 
