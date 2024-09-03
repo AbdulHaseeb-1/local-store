@@ -17,6 +17,7 @@ export default function CategoryBar() {
         const data = JSON.parse(response.data.categories);
         setCategories(data);
       } catch (error: any) {
+        console.log(error);
         showToast("Something went wrong,Please try again later", "error", 5000);
       }
     }
