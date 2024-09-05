@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-// import "@uploadthing/react/styles.css";
 
 const config = {
   darkMode: ["class"],
@@ -26,28 +25,27 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#28c981",
+          DEFAULT: "#3fcf8e", // Default primary color (for non-gradient use)
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
-        key:{
-          foreground: "hsl(var(--key-foreground))",
+        key: {
+          foreground: "#3fcf8e",
         },
-        value:{
+        value: {
           foreground: "hsl(var(--value-foreground))",
         },
-        success:{
-          foreground:"#000000",
-          background:"#000000"
+        success: {
+          foreground: "#000000",
+          background: "#000000",
         },
-        error:{
-          foreground:"hsl(var(--error-foreground))",
-          background:"hsl(var(--error-background))"
-        }
-        ,
+        error: {
+          foreground: "hsl(var(--error-foreground))",
+          background: "hsl(var(--error-background))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -68,6 +66,9 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+      },
+      backgroundImage: {
+        "primary-gradient": "linear-gradient(to top right, #10b981, #4ade80)",
       },
       borderRadius: {
         lg: "var(--radius)",

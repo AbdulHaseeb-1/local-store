@@ -32,12 +32,12 @@ function ServicesSection() {
           {services.map((service) => (
             <div
               key={service.id}
-              className="relative p-6 border border-transparent rounded-lg shadow-lg bg-gradient-to-r from-neutral-200 dark:from-neutral-900 dark:via-neutral-700 dark:to-neutral-800 transform transition-all duration-300 hover:scale-105 dark:bg-neutral-800 text-center group"
+              className="relative border  border-[#4ade80] p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 dark:bg-neutral-800 text-center group"
             >
-              <div className="absolute inset-0 bg-white dark:bg-neutral-800 rounded-lg shadow-lg opacity-90 group-hover:opacity-0 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-white dark:bg-neutral-900 rounded-lg shadow-sm  opacity-90 group-hover:opacity-0 transition-opacity duration-500"></div>
               <div className="relative z-10">
                 <div className="flex justify-center mb-4">{service.icon}</div>
-                <h3 className="text-2xl font-semibold  mb-2">
+                <h3 className="text-2xl font-semibold  mb-2 bg-primary-gradient text-transparent bg-clip-text">
                   {service.title}
                 </h3>
                 <p className=" dark:text-gray-300">{service.description}</p>

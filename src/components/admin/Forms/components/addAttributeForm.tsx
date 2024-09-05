@@ -45,7 +45,7 @@ export default function AddAttributeForm() {
                         </span>
                     )}
                 </div>
-                <span onClick={handleSubmit} className="h-8 gap-1 border font-semibold cursor-pointer rounded-lg bg-primary text-primary-foreground text-xs flex items-center justify-center px-3 "> Add </span>
+                <span onClick={handleSubmit} className="h-8 gap-1 bg-primary-gradient border font-semibold cursor-pointer rounded-lg bg-primary text-primary-foreground text-xs flex items-center justify-center px-3 "> Add </span>
             </div>
         </div>
     )

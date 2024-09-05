@@ -56,10 +56,10 @@ const DropdownUser = () => {
           <span className="block text-sm font-medium text-black dark:text-white">
             {session.data?.user?.name}
           </span>
-          <span className="block text-xs">{session.data?.user?.role}</span>
+          <span className="block text-xs text-primary">{session.data?.user?.role}</span>
         </span>
 
-        <span className=" border border-primary-foreground flex items-center justify-center h-10 w-10 rounded-full dark:bg-neutral-950  bg-slate-100 text-2xl font-bold">
+        <span className=" border border-primary flex items-center justify-center h-10 w-10 rounded-full dark:bg-neutral-950  bg-slate-100 text-2xl font-bold">
           {false ?
             <Image
               width={40}

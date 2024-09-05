@@ -47,7 +47,7 @@ export default function ProductCard_V({ product }: { product: CardProps }) {
       </Link>
       <CardFooter className="flex flex-row justify-between flex-wrap font-semibold text-sm px-4  gap-2 pt-2">
         <div className="flex flex-col ">
-          <span className="dark:text-neutral-200 text-md">
+          <span className="text-transparent text-lg bg-primary-gradient bg-clip-text text-md">
             Rs {product.selling_price.toString()}
           </span>
           <div className="flex">

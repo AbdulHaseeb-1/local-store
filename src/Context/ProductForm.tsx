@@ -20,7 +20,7 @@ interface ProductFormContextType {
 
 const initialStates = {
   title: "",
-  subtitle: "",
+  subTitle: "",
   description: "",
   category: "",
   brand: "",

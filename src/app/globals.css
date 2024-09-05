@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 3.9%;
 
     --card: 0 0% 100%;
@@ -13,17 +13,17 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
 
-    --primary: 152, 100%, 39%, 1;
+    --primary: 0 0% 100%;
     --primary-foreground: 0 0% 98%;
 
     --key-foreground:214 100% 60%;
     --value-foreground:0 0% 0%;
 
-    --success-foreground:0 0% 0%
-    --success-background:128 100% 32%
+    --success-foreground:0 0% 0%;
+    --success-background:128 100% 32%;
 
-    --error-foreground:0 0% 0%
-    --error-background:0 100% 35%
+    --error-foreground:0 0% 0%;
+    --error-background:0 100% 35%;
 
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -45,7 +45,7 @@
   }
 
   .dark {
-    --background: 0 0% 8%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
 
     --card: 0 0% 3.9%;

@@ -129,7 +129,7 @@ export default function Component() {
       <div className="flex flex-col justify-center items-center h-52 ">
         <div className="flex flex-col gap-4 justify-center items-center text-center">
           <p className="text-2xl">Nothing found 😐 </p>
-          <Button onClick={handleAddCategory} className="w-44">
+          <Button onClick={handleAddCategory} className="w-44 bg-primary-gradient">
             <PlusIcon className="w-4 h-4 mr-2" />
             Add Category
           </Button>
@@ -142,7 +142,7 @@ export default function Component() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Categories</h1>
-          <Button onClick={handleAddCategory}>
+          <Button onClick={handleAddCategory} className="bg-primary-gradient">
             <PlusIcon className="w-4 h-4 mr-2" />
             Add Category
           </Button>
