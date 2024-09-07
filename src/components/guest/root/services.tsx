@@ -23,7 +23,7 @@ function ServicesSection() {
   ];
 
   return (
-    <section className="py-16 dark:bg-background bg-background">
+    <section className="py-16  bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold text-center dark:text-gray-50 text-gray-800 mb-12">
           Our Services
@@ -32,7 +32,7 @@ function ServicesSection() {
           {services.map((service) => (
             <div
               key={service.id}
-              className="relative border  border-[#4ade80] p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 dark:bg-neutral-800 text-center group"
+              className="relative border  border-[#4ade8020] dark:bg-green-500/15 p-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105  text-center group"
             >
               <div className="absolute inset-0 bg-white dark:bg-neutral-900 rounded-lg shadow-sm  opacity-90 group-hover:opacity-0 transition-opacity duration-500"></div>
               <div className="relative z-10">
