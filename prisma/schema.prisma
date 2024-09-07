@@ -3,9 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model categories {
@@ -15,7 +14,7 @@ model categories {
   imageUrl      String     @db.VarChar(255)
   created_at    DateTime   @default(now())
   is_active     Boolean    @default(true)
-  updated_ata   DateTime   @default(now())
+  updated_at    DateTime   @default(now())
   imagePublicId String?
   products      products[]
 }
