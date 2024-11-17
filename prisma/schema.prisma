@@ -11,7 +11,7 @@ model categories {
   categoryId    BigInt     @id @default(autoincrement())
   categoryName  String     @db.VarChar(255)
   description   String?
-  imageUrl      String     @db.VarChar(255)
+  imageUrl      String?     
   created_at    DateTime   @default(now())
   is_active     Boolean    @default(true)
   updated_at    DateTime   @default(now())

@@ -173,7 +173,7 @@ const CategoryUploadForm: React.FC = () => {
               </Label>
               <Input
                 type="file"
-                accept=".png,.jpg,.jpeg"
+                accept=".svg"
                 name="icon"
                 onChange={handleChange}
               />
